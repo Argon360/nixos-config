@@ -56,7 +56,6 @@ virt-install \
   --graphics spice,listen=127.0.0.1 \
   --video virtio \
   --channel spicevmc \
-  --filesystem /home/argon/nixos-config,nixos_config,mode=mapped \
   --boot uefi \
   --noautoconsole
 
@@ -70,10 +69,8 @@ echo "                  INSIDE THE VM CONSOLE                   "
 echo "=========================================================="
 echo "Once the NixOS live desktop loads, open Konsole and run:"
 echo ""
-echo "  sudo mkdir -p /etc/nixos"
-echo "  sudo mount -t 9p -o trans=virtio nixos_config /etc/nixos"
-echo "  sudo /etc/nixos/scripts/vm-install.sh"
+echo "  curl -sSL https://raw.githubusercontent.com/Argon360/nixos-config/main/scripts/vm-install.sh | sudo bash"
 echo ""
-echo "This will format the virtual disk, apply your config, and"
-echo "install NixOS with your exact KDE + tools setup automatically!"
+echo "This will partition, clone your GitHub repo, apply your config,"
+echo "and install NixOS with your exact KDE + tools setup automatically!"
 echo "=========================================================="
