@@ -21,16 +21,25 @@ parted --script "$DISK" \
     set 1 esp on \
     mkpart primary ext4 512MiB 100%
 
+# Notify kernel and settle device nodes
+partprobe "$DISK" 2>/dev/null || true
+udevadm trigger 2>/dev/null || true
 udevadm settle
 
 echo "[2/4] Formatting partitions..."
 mkfs.fat -F 32 -n boot "${DISK}1"
 mkfs.ext4 -F -L nixos "${DISK}2"
 
+# Settle udev so labels and UUIDs are registered
+udevadm trigger 2>/dev/null || true
+udevadm settle
+sleep 1
+
 echo "[3/4] Mounting partitions to /mnt..."
-mount /dev/disk/by-label/nixos /mnt
+# Mount directly by block device to avoid udev race conditions
+mount "${DISK}2" /mnt
 mkdir -p /mnt/boot
-mount /dev/disk/by-label/boot /mnt/boot
+mount "${DISK}1" /mnt/boot
 
 echo "[4/4] Cloning configuration from GitHub: $REPO_URL..."
 mkdir -p /mnt/etc/nixos
