@@ -33,7 +33,7 @@
     remmina
 
     # Office & productivity
-    libreoffice-fresh
+    libreoffice
 
     # KDE Productivity Tools
     kdePackages.kcalc

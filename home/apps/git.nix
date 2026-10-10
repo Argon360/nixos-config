@@ -6,7 +6,7 @@
     # Configure your username and email here:
     # userName = "argon";
     # userEmail = "your.email@example.com";
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       pull.rebase = false;
       credential.helper = "!gh auth git-credential";
