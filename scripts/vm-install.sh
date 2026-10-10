@@ -14,7 +14,19 @@ if [ ! -b "$DISK" ]; then
     exit 1
 fi
 
+echo "[*] Cleaning up any existing mounts or background installers..."
+killall calamares 2>/dev/null || true
+umount -R /mnt 2>/dev/null || true
+swapoff -a 2>/dev/null || true
+for part in "${DISK}"*; do
+    [ -b "$part" ] && umount -f "$part" 2>/dev/null || true
+done
+sleep 1
+
 echo "[1/4] Partitioning $DISK (GPT: 512MB EFI + rest for root)..."
+# Wipe signatures to prevent conflict
+wipefs -a "$DISK" 2>/dev/null || true
+
 parted --script "$DISK" \
     mklabel gpt \
     mkpart ESP fat32 1MiB 512MiB \
@@ -30,13 +42,11 @@ echo "[2/4] Formatting partitions..."
 mkfs.fat -F 32 -n boot "${DISK}1"
 mkfs.ext4 -F -L nixos "${DISK}2"
 
-# Settle udev so labels and UUIDs are registered
 udevadm trigger 2>/dev/null || true
 udevadm settle
 sleep 1
 
 echo "[3/4] Mounting partitions to /mnt..."
-# Mount directly by block device to avoid udev race conditions
 mount "${DISK}2" /mnt
 mkdir -p /mnt/boot
 mount "${DISK}1" /mnt/boot
