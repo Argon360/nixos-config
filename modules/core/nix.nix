@@ -26,17 +26,5 @@
   # without needing patchelf. Essential for Neovim Mason LSPs, VS Code servers, etc.
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      zlib
-      fuse3
-      icu
-      nss
-      openssl
-      curl
-      expat
-      glib
-      libstdcxx5
-    ];
   };
 }
